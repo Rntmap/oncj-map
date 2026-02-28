@@ -57854,12 +57854,11 @@ function initMap() {
   const urlParams = new URLSearchParams(window.location.search);
   const weekParam = urlParams.get('week');
   if (weekParam) {
-    filters.week = weekParam;
-    const weekSelector = document.getElementById('week-selector');
-    if (weekSelector) weekSelector.value = weekParam;
+    // Use syncWeek to update both dropdowns and filter
+    syncWeek(weekParam);
+  } else {
+    applyFilters();
   }
-  
-  applyFilters();
 }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
