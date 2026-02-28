@@ -57849,6 +57849,16 @@ function initMap() {
   }).addTo(map);
   L.control.zoom({position:'bottomleft'}).addTo(map);
   setTimeout(()=>map.invalidateSize(),150);
+  
+  // Check for URL parameters (e.g., from comp analysis page)
+  const urlParams = new URLSearchParams(window.location.search);
+  const weekParam = urlParams.get('week');
+  if (weekParam) {
+    filters.week = weekParam;
+    const weekSelector = document.getElementById('week-selector');
+    if (weekSelector) weekSelector.value = weekParam;
+  }
+  
   applyFilters();
 }
 

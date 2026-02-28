@@ -61,6 +61,34 @@ body {
   padding-bottom:10px; border-bottom:2px solid var(--light);
 }
 
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header { padding:16px 20px; }
+  .header h1 { font-size:1.3rem; }
+  .header .subtitle { font-size:0.85rem; }
+  .container { padding:20px 16px; }
+  .section-header { font-size:1.15rem; margin:30px 0 16px; }
+  
+  .property-card { flex-direction:column; padding:16px; }
+  .property-card img { width:100%; max-width:300px; margin:0 auto; }
+  .property-specs { flex-wrap:wrap; gap:12px; }
+  .property-stats { flex-direction:column; gap:16px; }
+  
+  .comp-item { padding:16px; }
+  .comp-header { flex-direction:column; gap:8px; align-items:start; }
+  .comp-rank { font-size:1.2rem; }
+  .comp-address { font-size:0.95rem; }
+  
+  .comparison-table { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table { min-width:600px; font-size:0.85rem; }
+  thead th { padding:10px 8px; font-size:0.8rem; }
+  tbody td { padding:10px 8px; }
+  
+  .recommendations { padding:16px; }
+  .rec-item { padding:12px; font-size:0.9rem; }
+  .summary { padding:16px; font-size:0.95rem; }
+}
+
 /* Comp Set List */
 .comp-list { display:flex; flex-direction:column; gap:16px; }
 .comp-item {
@@ -112,6 +140,13 @@ tbody tr:hover { background:#f8fafb; }
 .rank-cell { text-align:center; font-size:0.85rem; color:var(--gray); }
 .competitive { background:#dcfce7; }
 .overpriced { background:#fee2e2; }
+.week-cell a {
+  color:var(--ocean); font-weight:600; text-decoration:none;
+  display:block; padding:4px 0;
+}
+.week-cell a:hover {
+  text-decoration:underline; color:var(--mid);
+}
 
 /* Recommendations */
 .recommendations {
@@ -414,6 +449,7 @@ function renderCompAnalysis(subject, comps, weeks) {
     <h2 class="section-header">Week-by-Week Pricing Comparison</h2>
     <p style="color:var(--gray);margin-bottom:16px;font-size:0.95rem;">
       Only showing weeks where you have pricing data. Comps without pricing for a week are excluded from that row's average.
+      <strong>Click any week</strong> to view it on the map.
     </p>`;
   
   // Build comparison table
@@ -446,7 +482,7 @@ function renderCompAnalysis(subject, comps, weeks) {
       const rowClass = Math.abs(diffPct) < 10 ? 'competitive' : (diff > 0 ? 'overpriced' : '');
       
       html += `<tr class="${rowClass}">
-        <td class="week-cell">${week}</td>
+        <td class="week-cell"><a href="ocnj-rental-map-final.html?week=${encodeURIComponent(week)}">${week}</a></td>
         <td class="price-cell">$${yourPrice.toLocaleString()}</td>
         <td class="price-cell">$${Math.round(compAvg).toLocaleString()}</td>
         <td class="diff-cell ${diffClass}">${diffSign}$${Math.round(Math.abs(diff)).toLocaleString()} (${diffSign}${diffPct}%)</td>
