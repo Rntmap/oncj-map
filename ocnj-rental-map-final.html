@@ -338,7 +338,7 @@ header{
     <div class="logo-icon">🌊</div>
     <div class="logo-text">
       OCNJ Rental Map
-      <small>1920 listings · February 28, 2026</small>
+      <small>1923 listings · February 28, 2026</small>
     </div>
   </div>
   <div class="result-badge" id="result-count">— Available</div>
@@ -577,27 +577,53 @@ header{
       <div class="filter-label">Unit Size</div>
       <div class="stepper-row">
         <div class="stepper">
-          <label>Bedrooms</label>
+          <label>Bedrooms (min)</label>
           <div class="stepper-ctrl">
-            <button onclick="step('beds',-1)">−</button>
-            <span id="beds-val">Any</span>
-            <button onclick="step('beds',1)">+</button>
+            <button onclick="step('bedsMin',-1)">−</button>
+            <span id="bedsMin-val">Any</span>
+            <button onclick="step('bedsMin',1)">+</button>
           </div>
         </div>
         <div class="stepper">
-          <label>Baths</label>
+          <label>Baths (min)</label>
           <div class="stepper-ctrl">
-            <button onclick="step('baths',-1)">−</button>
-            <span id="baths-val">Any</span>
-            <button onclick="step('baths',1)">+</button>
+            <button onclick="step('bathsMin',-1)">−</button>
+            <span id="bathsMin-val">Any</span>
+            <button onclick="step('bathsMin',1)">+</button>
           </div>
         </div>
         <div class="stepper">
-          <label>Guests</label>
+          <label>Guests (min)</label>
           <div class="stepper-ctrl">
-            <button onclick="step('guests',-1)">−</button>
-            <span id="guests-val">Any</span>
-            <button onclick="step('guests',1)">+</button>
+            <button onclick="step('guestsMin',-1)">−</button>
+            <span id="guestsMin-val">Any</span>
+            <button onclick="step('guestsMin',1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="stepper-row" style="margin-top:12px;">
+        <div class="stepper">
+          <label>Bedrooms (max)</label>
+          <div class="stepper-ctrl">
+            <button onclick="step('bedsMax',-1)">−</button>
+            <span id="bedsMax-val">Any</span>
+            <button onclick="step('bedsMax',1)">+</button>
+          </div>
+        </div>
+        <div class="stepper">
+          <label>Baths (max)</label>
+          <div class="stepper-ctrl">
+            <button onclick="step('bathsMax',-1)">−</button>
+            <span id="bathsMax-val">Any</span>
+            <button onclick="step('bathsMax',1)">+</button>
+          </div>
+        </div>
+        <div class="stepper">
+          <label>Guests (max)</label>
+          <div class="stepper-ctrl">
+            <button onclick="step('guestsMax',-1)">−</button>
+            <span id="guestsMax-val">Any</span>
+            <button onclick="step('guestsMax',1)">+</button>
           </div>
         </div>
       </div>
@@ -9447,6 +9473,41 @@ const properties = [
       "2026-09-05": 4900.0,
       "2026-09-12": 4500.0,
       "2026-09-19": 4300.0
+    },
+    "priceChanges": {}
+  },
+  {
+    "listId": "1198",
+    "address": "915 Palen Avenue, 2nd",
+    "lat": 39.2819592,
+    "lng": -74.5807957,
+    "beds": 3,
+    "baths": 2.0,
+    "guests": 6,
+    "zone": "north",
+    "imageUrl": "https://www.bergerrealty.com/images/rentals/1198.jpg",
+    "listingUrl": "https://www.bergerrealty.com/rental/1198.html",
+    "weeks": {
+      "2026-05-09": 1000.0,
+      "2026-05-16": 1000.0,
+      "2026-05-23": 1000.0,
+      "2026-05-30": 1000.0,
+      "2026-06-06": 1200.0,
+      "2026-06-13": 2000.0,
+      "2026-06-27": 2800.0,
+      "2026-07-04": 2500.0,
+      "2026-07-11": 2500.0,
+      "2026-07-18": 2500.0,
+      "2026-07-25": 2500.0,
+      "2026-08-01": 2500.0,
+      "2026-08-08": 2800.0,
+      "2026-08-15": 2500.0,
+      "2026-08-22": 2200.0,
+      "2026-08-29": 2000.0,
+      "2026-09-05": 1700.0,
+      "2026-09-12": 1500.0,
+      "2026-09-19": 1200.0,
+      "2026-09-26": 1200.0
     },
     "priceChanges": {}
   },
@@ -35944,6 +36005,25 @@ const properties = [
     "priceChanges": {}
   },
   {
+    "listId": "454",
+    "address": "5044 Haven Avenue, 1st Floor",
+    "lat": 39.230937,
+    "lng": -74.63262,
+    "beds": 3,
+    "baths": 2.0,
+    "guests": 8,
+    "zone": "south",
+    "imageUrl": "https://www.bergerrealty.com/images/rentals/454.jpg",
+    "listingUrl": "https://www.bergerrealty.com/rental/454.html",
+    "weeks": {
+      "2026-06-27": 3000.0,
+      "2026-07-04": 3000.0,
+      "2026-07-11": 3000.0,
+      "2026-07-18": 3000.0
+    },
+    "priceChanges": {}
+  },
+  {
     "listId": "455d",
     "address": "4941 Central Avenue, 1st Floor",
     "lat": 39.2314574,
@@ -41565,6 +41645,25 @@ const properties = [
       "2026-09-19": 1800.0,
       "2026-09-26": 1700.0,
       "2026-10-03": 1700.0
+    },
+    "priceChanges": {}
+  },
+  {
+    "listId": "600a",
+    "address": "3437 Asbury Avenue, 1st",
+    "lat": 39.2507048,
+    "lng": -74.611455,
+    "beds": 3,
+    "baths": 2.0,
+    "guests": 7,
+    "zone": "mid",
+    "imageUrl": "https://www.bergerrealty.com/images/rentals/600a.jpg",
+    "listingUrl": "https://www.bergerrealty.com/rental/600a.html",
+    "weeks": {
+      "2026-08-15": 3550.0,
+      "2026-08-22": 3000.0,
+      "2026-08-29": 2600.0,
+      "2026-09-05": 2200.0
     },
     "priceChanges": {}
   },
@@ -57817,10 +57916,10 @@ const properties = [
 let map, markers = [];
 let filters = {
   week:'2026-07-04', priceMin:500, priceMax:15000,
-  beds:0, baths:0, guests:0,
+  bedsMin:0, bedsMax:0, bathsMin:0, bathsMax:0, guestsMin:0, guestsMax:0,
   north:false, mid:false, south:false
 };
-const stepState = {beds:0,baths:0,guests:0};
+const stepState = {bedsMin:0,bedsMax:0,bathsMin:0,bathsMax:0,guestsMin:0,guestsMax:0};
 let firstRender = true;
 
 // ── SHEET ─────────────────────────────────────────────────────────────────────
@@ -57894,7 +57993,7 @@ function renderMarkers(data) {
           <div class="popup-specs">${p.beds||'?'} BR · ${p.baths||'?'} BA · ${p.guests||'?'} guests</div>
           <div class="popup-price">${price?'$'+price.toLocaleString()+' / week':'Unavailable'}</div>
           <div style="display:flex;gap:8px;margin-top:12px;">
-            <a href="ocnj-comp-analysis.html?id=${p.listId}" target="_blank" class="popup-link popup-link-secondary">📊 Comp Analysis</a>
+            <a href="ocnj-comp-analysis.html?id=${p.listId}&week=${filters.week}" target="_blank" class="popup-link popup-link-secondary">📊 Comp Analysis</a>
             <a href="${p.listingUrl}" target="_blank" class="popup-link">View on Berger →</a>
           </div>
         </div>
@@ -57918,9 +58017,15 @@ function applyFilters() {
     const price=(p.weeks||{})[filters.week];
     if(!price) return false;
     if(price<filters.priceMin||price>filters.priceMax) return false;
-    if(filters.beds>0&&p.beds&&p.beds<filters.beds) return false;
-    if(filters.baths>0&&p.baths&&p.baths<filters.baths) return false;
-    if(filters.guests>0&&p.guests&&p.guests<filters.guests) return false;
+    
+    // Min/Max filters for beds, baths, guests
+    if(filters.bedsMin>0&&p.beds&&p.beds<filters.bedsMin) return false;
+    if(filters.bedsMax>0&&p.beds&&p.beds>filters.bedsMax) return false;
+    if(filters.bathsMin>0&&p.baths&&p.baths<filters.bathsMin) return false;
+    if(filters.bathsMax>0&&p.baths&&p.baths>filters.bathsMax) return false;
+    if(filters.guestsMin>0&&p.guests&&p.guests<filters.guestsMin) return false;
+    if(filters.guestsMax>0&&p.guests&&p.guests>filters.guestsMax) return false;
+    
     if(activeZones.length>0&&!activeZones.includes(p.zone)) return false;
     return true;
   });
@@ -57928,7 +58033,8 @@ function applyFilters() {
 
   // Active filter indicator on FAB
   const hasFilters = filters.priceMin>500||filters.priceMax<15000||
-    filters.beds>0||filters.baths>0||filters.guests>0||
+    filters.bedsMin>0||filters.bedsMax>0||filters.bathsMin>0||filters.bathsMax>0||
+    filters.guestsMin>0||filters.guestsMax>0||
     filters.north||filters.mid||filters.south;
   const badge=document.getElementById('active-badge');
   badge.style.display=hasFilters?'inline':'none';
@@ -57975,10 +58081,17 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // ── STEPPERS ─────────────────────────────────────────────────────────────────
 function step(key,delta) {
-  const max={beds:10,baths:8,guests:24};
-  stepState[key]=Math.min(max[key],Math.max(0,stepState[key]+delta));
+  const baseKey = key.replace('Min','').replace('Max','').toLowerCase();
+  const max={beds:10,baths:8,guests:24,bedsmin:10,bedsmax:10,bathsmin:8,bathsmax:8,guestsmin:24,guestsmax:24};
+  stepState[key]=Math.min(max[key.toLowerCase()],Math.max(0,stepState[key]+delta));
   filters[key]=stepState[key];
-  document.getElementById(key+'-val').textContent=stepState[key]===0?'Any':stepState[key]+'+';
+  
+  // Display logic: min shows "X+", max shows just "X" or "Any"
+  if (key.endsWith('Min')) {
+    document.getElementById(key+'-val').textContent=stepState[key]===0?'Any':stepState[key]+'+';
+  } else {
+    document.getElementById(key+'-val').textContent=stepState[key]===0?'Any':stepState[key];
+  }
 }
 
 // ── CHIPS ─────────────────────────────────────────────────────────────────────
