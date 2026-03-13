@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>OCNJ 2026 Summer Rental Market Trends</title>
+<style>
+:root {
+  --ocean:#0a3d5c; --mid:#1a6b96; --light:#4db8e8;
+  --sand:#f5e9d0; --gray:#7a8c99; --black:#1a2b36;
+  --green:#059669; --yellow:#f59e0b; --red:#dc2626;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#f8fafb; color:var(--black);
+  line-height:1.6;
+}
+
+.header {
+  background:linear-gradient(135deg, var(--ocean) 0%, var(--mid) 100%);
+  color:white; padding:40px 20px; text-align:center;
+  box-shadow:0 4px 20px rgba(10,61,92,0.2);
+}
+
+.header h1 {
+  font-size:2rem; margin-bottom:8px;
+}
+
+.header .subtitle {
+  font-size:1rem; opacity:0.9; margin-bottom:20px;
+}
+
+.header .nav {
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+}
+
+.header .nav a {
+  background:rgba(255,255,255,0.2); color:white; padding:10px 20px;
+  border-radius:8px; text-decoration:none; font-weight:600;
+  transition:background 0.2s;
+}
+
+.header .nav a:hover {
+  background:rgba(255,255,255,0.3);
+}
+
+.container {
+  max-width:1400px; margin:30px auto; padding:0 20px;
+}
+
+.info-box {
+  background:white; border-radius:12px; padding:24px;
+  box-shadow:0 2px 16px rgba(10,61,92,0.1); margin-bottom:30px;
+}
+
+.info-box h2 {
+  font-size:1.3rem; color:var(--ocean); margin-bottom:12px;
+}
+
+.info-box p {
+  color:var(--gray); margin-bottom:8px;
+}
+
+.legend {
+  display:flex; gap:20px; flex-wrap:wrap; margin-top:16px;
+}
+
+.legend-item {
+  display:flex; align-items:center; gap:8px;
+}
+
+.legend-dot {
+  width:12px; height:12px; border-radius:50%;
+}
+
+.legend-dot.slow { background:var(--green); }
+.legend-dot.medium { background:var(--yellow); }
+.legend-dot.hot { background:var(--red); }
+
+.table-container {
+  background:white; border-radius:12px;
+  box-shadow:0 2px 16px rgba(10,61,92,0.1);
+  overflow-x:auto;
+}
+
+table {
+  width:100%; border-collapse:collapse;
+}
+
+thead {
+  background:var(--ocean); color:white;
+  position:sticky; top:0;
+}
+
+thead th {
+  padding:16px 12px; text-align:left; font-weight:600;
+  font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;
+}
+
+tbody tr {
+  border-bottom:1px solid #e5e7eb;
+  transition:background 0.2s;
+}
+
+tbody tr:hover {
+  background:#f8fafb;
+}
+
+tbody td {
+  padding:14px 12px;
+}
+
+.week-cell {
+  font-weight:600; color:var(--ocean);
+}
+
+.week-cell a {
+  color:var(--ocean); text-decoration:none;
+  display:block;
+}
+
+.week-cell a:hover {
+  text-decoration:underline; color:var(--mid);
+}
+
+.number-cell {
+  text-align:right; font-variant-numeric:tabular-nums;
+}
+
+.velocity-cell {
+  text-align:center; font-weight:600;
+  padding:6px 12px; border-radius:6px;
+}
+
+.velocity-slow { background:#dcfce7; color:var(--green); }
+.velocity-medium { background:#fef3c7; color:#92400e; }
+.velocity-hot { background:#fee2e2; color:var(--red); }
+
+.price-comparison {
+  font-size:0.85rem; color:var(--gray);
+}
+
+.price-higher { color:var(--red); }
+.price-lower { color:var(--green); }
+
+.loading {
+  text-align:center; padding:60px; color:var(--gray);
+}
+
+.error {
+  background:#fee2e2; color:#991b1b; padding:20px;
+  border-radius:8px; border-left:4px solid #dc2626;
+}
+
+.no-data {
+  text-align:center; padding:40px; color:var(--gray);
+}
+
+.footer {
+  text-align:center; padding:40px 20px; color:var(--gray);
+  font-size:0.9rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header h1 { font-size:1.5rem; }
+  .header .subtitle { font-size:0.9rem; }
+  .header .nav { gap:8px; }
+  .header .nav a { padding:8px 14px; font-size:0.85rem; }
+  
+  .container { padding:0 12px; margin:20px auto; }
+  .info-box { padding:16px; }
+  .info-box h2 { font-size:1.1rem; }
+  
+  .table-container { border-radius:8px; }
+  
+  table { font-size:0.85rem; min-width:700px; }
+  thead th { padding:12px 8px; font-size:0.75rem; }
+  tbody td { padding:10px 8px; }
+  
+  .legend { gap:12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏖️ OCNJ 2026 Summer Rental Market</h1>
+  <div class="subtitle">Track rental trends and booking velocity across all summer weeks</div>
+  <div class="nav">
+    <a href="ocnj-rental-map-final.html">🗺️ Browse Map</a>
+    <a href="ocnj-comp-analysis.html">📊 Comp Analysis</a>
+  </div>
+</div>
+
+<div class="container">
+  <div id="info-section"></div>
+  <div id="table-section" class="table-container">
+    <div class="loading">Loading market trends...</div>
+  </div>
+</div>
+
+<div class="footer">
+  OCNJ Rental Map • Data from Berger Realty • Updated <span id="update-date">--</span>
+</div>
+
+<script>
+async function loadTrends() {
+  try {
+    const response = await fetch('market-trends.json');
+    if (!response.ok) throw new Error('Trends file not found');
+    
+    const data = await response.json();
+    
+    // Update footer date
+    document.getElementById('update-date').textContent = data.latest_snapshot || data.generated;
+    
+    // Show info box
+    renderInfoBox(data);
+    
+    // If no weeks data, show message
+    if (!data.weeks || data.weeks.length === 0) {
+      document.getElementById('table-section').innerHTML = `
+        <div class="no-data">
+          <h3>Not Enough Data Yet</h3>
+          <p>${data.message || 'Run the pipeline a few more times to build trend history.'}</p>
+          <p style="margin-top:12px;">Snapshots collected: ${data.snapshots_analyzed || 0}</p>
+        </div>`;
+      return;
+    }
+    
+    // Render table
+    renderTable(data.weeks);
+    
+  } catch (error) {
+    console.error('Error loading trends:', error);
+    document.getElementById('table-section').innerHTML = `
+      <div class="error">
+        <strong>Error Loading Trends</strong><br>
+        ${error.message}<br><br>
+        Make sure you've run the pipeline at least twice to generate trend data.
+      </div>`;
+  }
+}
+
+function renderInfoBox(data) {
+  const snapshots = data.snapshots_analyzed || 0;
+  const dateRange = data.first_snapshot && data.latest_snapshot 
+    ? `${data.first_snapshot} → ${data.latest_snapshot}`
+    : 'Building history...';
+  
+  const html = `
+    <div class="info-box">
+      <h2>How to Read This Data</h2>
+      <p><strong>Available Now:</strong> Number of properties still available for that week</p>
+      <p><strong>Avg Price (Available):</strong> Average weekly rate of properties still on the market</p>
+      <p><strong>Avg Price (Rented):</strong> Average weekly rate of properties that rented since first snapshot</p>
+      <p><strong>Velocity:</strong> Properties rented per week (higher = booking faster)</p>
+      <p style="margin-top:12px;"><strong>Snapshots analyzed:</strong> ${snapshots} weeks of data (${dateRange})</p>
+      
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot slow"></div>
+          <span>Slow (< 30/week)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot medium"></div>
+          <span>Medium (30-60/week)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot hot"></div>
+          <span>Hot (> 60/week)</span>
+        </div>
+      </div>
+    </div>`;
+  
+  document.getElementById('info-section').innerHTML = html;
+}
+
+function renderTable(weeks) {
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Week Starting</th>
+          <th class="number-cell">Available Now</th>
+          <th class="number-cell">Avg Price (Available)</th>
+          <th class="number-cell">Avg Price (Rented)</th>
+          <th>Velocity</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  
+  weeks.forEach(week => {
+    const availPrice = week.avg_price_available;
+    const rentedPrice = week.avg_price_rented;
+    
+    // Determine velocity class
+    const velocity = week.velocity_per_week;
+    let velocityClass = 'velocity-slow';
+    if (velocity >= 60) velocityClass = 'velocity-hot';
+    else if (velocity >= 30) velocityClass = 'velocity-medium';
+    
+    // Price comparison insight
+    let priceComparison = '';
+    if (availPrice && rentedPrice) {
+      const diff = rentedPrice - availPrice;
+      const pct = ((diff / availPrice) * 100).toFixed(0);
+      if (Math.abs(diff) > 200) {
+        const sign = diff > 0 ? '+' : '';
+        const className = diff > 0 ? 'price-higher' : 'price-lower';
+        const insight = diff > 0 ? '(premium moving)' : '(budget moving)';
+        priceComparison = `<div class="price-comparison ${className}">${sign}${pct}% ${insight}</div>`;
+      }
+    }
+    
+    html += `
+      <tr>
+        <td class="week-cell">
+          <a href="ocnj-rental-map-final.html?week=${week.week_start}">
+            ${week.week_label}
+          </a>
+        </td>
+        <td class="number-cell">${week.available_now.toLocaleString()}</td>
+        <td class="number-cell">
+          ${availPrice ? '$' + Math.round(availPrice).toLocaleString() : '—'}
+        </td>
+        <td class="number-cell">
+          ${rentedPrice ? '$' + Math.round(rentedPrice).toLocaleString() : '—'}
+          ${priceComparison}
+        </td>
+        <td>
+          <div class="velocity-cell ${velocityClass}">
+            ${velocity.toFixed(1)}/week
+          </div>
+        </td>
+      </tr>`;
+  });
+  
+  html += `</tbody></table>`;
+  
+  document.getElementById('table-section').innerHTML = html;
+}
+
+// Load on page load
+loadTrends();
+</script>
+
+</body>
+</html>
