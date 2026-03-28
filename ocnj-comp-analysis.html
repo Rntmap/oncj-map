@@ -127,6 +127,63 @@ body {
   background:var(--ocean);
 }
 
+/* Available to Add Section */
+.available-section {
+  background:white; border-radius:12px; padding:24px;
+  box-shadow:0 2px 16px rgba(10,61,92,0.1); margin-bottom:30px;
+}
+.available-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px;
+}
+.available-header h3 {
+  font-size:1.3rem; color:var(--ocean);
+}
+.sort-controls {
+  display:flex; gap:8px; align-items:center;
+}
+.sort-label {
+  font-size:0.9rem; color:var(--gray);
+}
+.sort-select {
+  padding:6px 12px; border:2px solid #e5e7eb; border-radius:6px;
+  font-size:0.9rem; cursor:pointer;
+}
+.sort-select:focus {
+  outline:none; border-color:var(--mid);
+}
+.available-list {
+  display:grid; gap:12px;
+}
+.available-item {
+  background:#f8fafb; border-radius:8px; padding:16px;
+  display:flex; justify-content:space-between; align-items:center;
+  transition:all 0.2s; border:2px solid transparent;
+}
+.available-item:hover {
+  background:white; border-color:var(--light);
+}
+.available-info {
+  flex:1;
+}
+.available-address {
+  font-weight:600; color:var(--ocean); margin-bottom:4px;
+}
+.available-details {
+  display:flex; gap:12px; flex-wrap:wrap;
+  font-size:0.85rem; color:var(--gray);
+}
+.available-details span {
+  padding:2px 8px; background:white; border-radius:4px;
+}
+.match-badge {
+  background:var(--light); color:white; font-weight:600;
+}
+.empty-state {
+  text-align:center; padding:40px; color:var(--gray);
+  font-size:0.95rem;
+}
+
 .section-header {
   font-size:1.3rem; color:var(--ocean); margin-bottom:20px;
   display:flex; justify-content:space-between; align-items:center;
@@ -271,6 +328,10 @@ body {
   .remove-btn { top:12px; right:12px; }
   .week-selector-container { flex-direction:column; align-items:stretch; }
   .week-selector { max-width:100%; }
+  .available-header { flex-direction:column; align-items:stretch; gap:12px; }
+  .sort-controls { justify-content:flex-start; }
+  .available-item { flex-direction:column; align-items:stretch; gap:12px; }
+  .add-btn-small { width:100%; }
 }
 </style>
 </head>
@@ -296,6 +357,7 @@ let allComps = [];         // All potential comps with scores
 let selectedCompIds = [];  // IDs of currently selected comps
 let allWeeks = [];
 let selectedWeek = null;
+let sortBy = 'match';      // match, price, distance
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -466,21 +528,30 @@ function getSelectedComps() {
 function removeComp(listId) {
   selectedCompIds = selectedCompIds.filter(id => id !== listId);
   updateURL();
-  renderCompAnalysis();
+  renderCompList();
+  renderAvailableComps();
+  renderWeekComparison();
 }
 
 function addComp(listId) {
   if (!selectedCompIds.includes(listId)) {
     selectedCompIds.push(listId);
     updateURL();
-    renderCompAnalysis();
+    // Hide search results after adding
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('property-search').value = '';
+    renderCompList();
+    renderAvailableComps();
+    renderWeekComparison();
   }
 }
 
 function resetToAuto() {
   selectedCompIds = allComps.slice(0, 10).map(c => c.listId);
   updateURL();
-  renderCompAnalysis();
+  renderCompList();
+  renderAvailableComps();
+  renderWeekComparison();
 }
 
 function updateURL() {
@@ -589,10 +660,13 @@ function renderCompAnalysis() {
     </div>
     
     <h2 class="section-header">
-      Competitive Set 
+      Selected Comps 
       <span class="comp-count">${comps.length} ${comps.length === 1 ? 'property' : 'properties'} selected</span>
     </h2>
     <div id="comp-list-container"></div>
+    
+    <div id="available-section" class="available-section"></div>
+    
     <div id="week-table-container"></div>
     <div id="recommendations-container"></div>`;
   
@@ -604,6 +678,7 @@ function renderCompAnalysis() {
   });
   
   renderCompList();
+  renderAvailableComps();
   renderWeekComparison();
 }
 
@@ -637,6 +712,91 @@ function renderCompList() {
   html += '</div>';
   
   document.getElementById('comp-list-container').innerHTML = html;
+}
+
+function renderAvailableComps() {
+  const availableComps = allComps.filter(c => !selectedCompIds.includes(c.listId));
+  
+  if (availableComps.length === 0) {
+    document.getElementById('available-section').innerHTML = `
+      <div class="empty-state">
+        <strong>All Available Properties Added</strong><br>
+        You've added all ${allComps.length} qualified properties to your comp set!
+      </div>`;
+    return;
+  }
+  
+  // Sort available comps
+  let sorted = [...availableComps];
+  if (sortBy === 'match') {
+    sorted.sort((a, b) => b.similarity - a.similarity);
+  } else if (sortBy === 'price') {
+    // Sort by average price
+    const getAvgPrice = (comp) => {
+      if (!comp.weeks || Object.keys(comp.weeks).length === 0) return 0;
+      const prices = Object.values(comp.weeks);
+      return prices.reduce((a, b) => a + b, 0) / prices.length;
+    };
+    sorted.sort((a, b) => getAvgPrice(a) - getAvgPrice(b));
+  } else if (sortBy === 'distance') {
+    // Sort by distance from subject property
+    sorted.sort((a, b) => {
+      const distA = haversineDistance(subjectProperty.lat, subjectProperty.lng, a.lat, a.lng);
+      const distB = haversineDistance(subjectProperty.lat, subjectProperty.lng, b.lat, b.lng);
+      return distA - distB;
+    });
+  }
+  
+  let html = `
+    <div class="available-header">
+      <h3>Available to Add <span style="font-weight:normal; color:var(--gray); font-size:0.9rem;">(${availableComps.length} properties)</span></h3>
+      <div class="sort-controls">
+        <span class="sort-label">Sort by:</span>
+        <select class="sort-select" id="sort-select" onchange="changeSortBy(this.value)">
+          <option value="match" ${sortBy === 'match' ? 'selected' : ''}>Best Match</option>
+          <option value="price" ${sortBy === 'price' ? 'selected' : ''}>Price (Low to High)</option>
+          <option value="distance" ${sortBy === 'distance' ? 'selected' : ''}>Distance</option>
+        </select>
+      </div>
+    </div>
+    <div class="available-list">`;
+  
+  sorted.forEach(c => {
+    // Get sample price (average of all weeks)
+    let samplePrice = 'N/A';
+    if (c.weeks && Object.keys(c.weeks).length > 0) {
+      const prices = Object.values(c.weeks);
+      const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+      samplePrice = '$' + Math.round(avg).toLocaleString();
+    }
+    
+    // Get distance from subject property
+    const distance = haversineDistance(subjectProperty.lat, subjectProperty.lng, c.lat, c.lng);
+    const distStr = distance < 1000 ? Math.round(distance) + 'm' : (distance / 1000).toFixed(1) + 'km';
+    
+    html += `
+      <div class="available-item">
+        <div class="available-info">
+          <div class="available-address">${c.address}</div>
+          <div class="available-details">
+            <span class="match-badge">Match: ${Math.round(c.similarity)}</span>
+            <span>${c.beds || '?'} BR</span>
+            <span>${c.baths || '?'} BA</span>
+            <span>📍 ${distStr} away</span>
+            <span>💰 Avg: ${samplePrice}</span>
+          </div>
+        </div>
+        <button class="add-btn-small" onclick="addComp('${c.listId}')">+ Add</button>
+      </div>`;
+  });
+  
+  html += '</div>';
+  document.getElementById('available-section').innerHTML = html;
+}
+
+function changeSortBy(newSort) {
+  sortBy = newSort;
+  renderAvailableComps();
 }
 
 function renderWeekComparison() {
