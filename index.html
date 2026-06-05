@@ -159,6 +159,103 @@ tbody td {
   text-align:center; padding:40px; color:var(--gray);
 }
 
+/* Expandable row toggle */
+.expand-btn {
+  background:none; border:none; cursor:pointer;
+  color:var(--mid); font-size:1rem; padding:2px 6px;
+  border-radius:4px; transition:background 0.15s;
+  line-height:1;
+}
+.expand-btn:hover { background:#e0f2fe; }
+
+tbody tr.data-row { cursor:pointer; }
+tbody tr.data-row:hover { background:#f0f7ff; }
+
+/* Detail row that appears when expanded */
+tr.detail-row td {
+  padding:0; background:#f8fafb;
+  border-bottom:2px solid var(--mid);
+}
+tr.detail-row.hidden { display:none; }
+
+.detail-inner {
+  padding:20px 24px;
+}
+
+.detail-inner h4 {
+  font-size:0.95rem; color:var(--ocean);
+  margin-bottom:14px; font-weight:700;
+}
+
+/* Booking progression chart */
+.chart-wrap {
+  width:100%; overflow-x:auto;
+}
+
+.booking-chart {
+  display:block; width:100%; min-width:300px;
+}
+
+.chart-bar-group {
+  display:flex; align-items:flex-end; gap:4px;
+  height:120px; margin-bottom:6px;
+}
+
+.chart-col {
+  display:flex; flex-direction:column; align-items:center;
+  flex:1; min-width:40px;
+}
+
+.chart-bar {
+  width:100%; border-radius:4px 4px 0 0;
+  transition:height 0.3s ease;
+  position:relative;
+}
+.chart-bar.available { background:var(--mid); }
+.chart-bar.rented { background:#fee2e2; border:1px solid #fca5a5; }
+
+.chart-label {
+  font-size:0.65rem; color:var(--gray); text-align:center;
+  margin-top:4px; white-space:nowrap;
+}
+.chart-value {
+  font-size:0.7rem; font-weight:700; color:var(--ocean);
+  text-align:center; margin-bottom:3px;
+}
+
+.chart-legend {
+  display:flex; gap:16px; margin-top:10px; flex-wrap:wrap;
+}
+.chart-legend-item {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.8rem; color:var(--gray);
+}
+.chart-legend-dot {
+  width:12px; height:12px; border-radius:3px;
+}
+
+/* Stats row inside detail */
+.detail-stats {
+  display:flex; gap:16px; flex-wrap:wrap; margin-top:14px;
+  padding-top:14px; border-top:1px solid #e5e7eb;
+}
+.detail-stat {
+  flex:1; min-width:100px; text-align:center;
+  background:white; padding:10px; border-radius:8px;
+  border:1px solid #e5e7eb;
+}
+.detail-stat-label {
+  font-size:0.75rem; color:var(--gray); margin-bottom:4px;
+}
+.detail-stat-value {
+  font-size:1.2rem; font-weight:700; color:var(--ocean);
+}
+
+@media(max-width:600px) {
+  .detail-inner { padding:14px; }
+  .chart-col { min-width:28px; }
+}
+
 .footer {
   text-align:center; padding:40px 20px; color:var(--gray);
   font-size:0.9rem;
@@ -256,9 +353,10 @@ function renderInfoBox(data) {
     <div class="info-box">
       <h2>How to Read This Data</h2>
       <p><strong>Available Now:</strong> Number of properties still available for that week</p>
+      <p><strong>Booked This Week:</strong> Properties that rented since the last update</p>
       <p><strong>Avg Price (Available):</strong> Average weekly rate of properties still on the market</p>
       <p><strong>Avg Price (Rented):</strong> Average weekly rate of properties that rented since first snapshot</p>
-      <p><strong>Velocity:</strong> Properties rented per week (higher = booking faster)</p>
+      <p><strong>Velocity:</strong> Properties rented per week over entire tracking period (higher = booking faster)</p>
       <p style="margin-top:12px;"><strong>Snapshots analyzed:</strong> ${snapshots} weeks of data (${dateRange})</p>
       
       <div class="legend">
@@ -280,69 +378,134 @@ function renderInfoBox(data) {
   document.getElementById('info-section').innerHTML = html;
 }
 
+function renderChart(history, currentAvail) {
+  if (!history || history.length < 2) {
+    return '<p style="color:var(--gray);font-size:0.85rem;">Not enough history yet — needs 2+ snapshots.</p>';
+  }
+
+  const maxAvail = Math.max(...history.map(h => h.available), 1);
+  const firstAvail = history[0].available;
+  const chartH = 120;
+
+  // Build columns
+  let cols = '';
+  history.forEach((h, i) => {
+    const availH = Math.round((h.available / maxAvail) * chartH);
+    const rentedCount = Math.max(0, firstAvail - h.available);
+    const rentedH = Math.round((rentedCount / maxAvail) * chartH);
+    const label = h.date.slice(5); // "MM-DD"
+
+    cols += '<div class="chart-col">' +
+      '<div class="chart-value">' + h.available + '</div>' +
+      '<div style="display:flex;align-items:flex-end;gap:2px;height:' + chartH + 'px;">' +
+        '<div class="chart-bar available" style="height:' + availH + 'px;flex:1;" title="Available: ' + h.available + '"></div>' +
+        (rentedH > 0 ? '<div class="chart-bar rented" style="height:' + rentedH + 'px;flex:1;" title="Rented: ' + rentedCount + '"></div>' : '') +
+      '</div>' +
+      '<div class="chart-label">' + label + '</div>' +
+      '</div>';
+  });
+
+  const totalBooked = firstAvail - currentAvail;
+  const pctBooked = firstAvail > 0 ? Math.round((totalBooked / firstAvail) * 100) : 0;
+
+  return '<div class="chart-wrap">' +
+    '<h4>Booking Progression (' + history.length + ' snapshots, one per pipeline week)</h4>' +
+    '<div class="chart-bar-group">' + cols + '</div>' +
+    '<div class="chart-legend">' +
+      '<div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--mid)"></div> Still available</div>' +
+      '<div class="chart-legend-item"><div class="chart-legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> Booked (vs. first snapshot)</div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="detail-stats">' +
+      '<div class="detail-stat"><div class="detail-stat-label">First Tracked</div><div class="detail-stat-value">' + history[0].available + '</div></div>' +
+      '<div class="detail-stat"><div class="detail-stat-label">Available Now</div><div class="detail-stat-value">' + currentAvail + '</div></div>' +
+      '<div class="detail-stat"><div class="detail-stat-label">Total Booked</div><div class="detail-stat-value" style="color:var(--red)">' + totalBooked + '</div></div>' +
+      '<div class="detail-stat"><div class="detail-stat-label">% Booked</div><div class="detail-stat-value">' + pctBooked + '%</div></div>' +
+    '</div>';
+}
+
 function renderTable(weeks) {
   let html = `
     <table>
       <thead>
         <tr>
+          <th style="width:32px;"></th>
           <th>Week Starting</th>
           <th class="number-cell">Available Now</th>
+          <th class="number-cell">Booked This Update</th>
           <th class="number-cell">Avg Price (Available)</th>
           <th class="number-cell">Avg Price (Rented)</th>
           <th>Velocity</th>
         </tr>
       </thead>
       <tbody>`;
-  
-  weeks.forEach(week => {
+
+  weeks.forEach((week, idx) => {
     const availPrice = week.avg_price_available;
     const rentedPrice = week.avg_price_rented;
-    
-    // Determine velocity class
+
     const velocity = week.velocity_per_week;
     let velocityClass = 'velocity-slow';
     if (velocity >= 60) velocityClass = 'velocity-hot';
     else if (velocity >= 30) velocityClass = 'velocity-medium';
-    
-    // Price comparison insight
+
     let priceComparison = '';
     if (availPrice && rentedPrice) {
       const diff = rentedPrice - availPrice;
       const pct = ((diff / availPrice) * 100).toFixed(0);
       if (Math.abs(diff) > 200) {
         const sign = diff > 0 ? '+' : '';
-        const className = diff > 0 ? 'price-higher' : 'price-lower';
+        const cls = diff > 0 ? 'price-higher' : 'price-lower';
         const insight = diff > 0 ? '(premium moving)' : '(budget moving)';
-        priceComparison = `<div class="price-comparison ${className}">${sign}${pct}% ${insight}</div>`;
+        priceComparison = '<div class="price-comparison ' + cls + '">' + sign + pct + '% ' + insight + '</div>';
       }
     }
-    
+
+    const rowId = 'detail-' + idx;
+
+    // Data row with expand button
     html += `
-      <tr>
+      <tr class="data-row" onclick="toggleDetail('${rowId}')">
+        <td style="text-align:center;">
+          <button class="expand-btn" id="btn-${rowId}" title="Show booking history">▶</button>
+        </td>
         <td class="week-cell">
-          <a href="ocnj-rental-map-final.html?week=${week.week_start}">
+          <a href="ocnj-rental-map-final.html?week=${week.week_start}" onclick="event.stopPropagation()">
             ${week.week_label}
           </a>
         </td>
         <td class="number-cell">${week.available_now.toLocaleString()}</td>
-        <td class="number-cell">
-          ${availPrice ? '$' + Math.round(availPrice).toLocaleString() : '—'}
-        </td>
+        <td class="number-cell">${week.rented_since_last || 0}</td>
+        <td class="number-cell">${availPrice ? '$' + Math.round(availPrice).toLocaleString() : '—'}</td>
         <td class="number-cell">
           ${rentedPrice ? '$' + Math.round(rentedPrice).toLocaleString() : '—'}
           ${priceComparison}
         </td>
         <td>
-          <div class="velocity-cell ${velocityClass}">
-            ${velocity.toFixed(1)}/week
-          </div>
+          <div class="velocity-cell ${velocityClass}">${velocity.toFixed(1)}/week</div>
+        </td>
+      </tr>`;
+
+    // Hidden detail row with chart
+    const chartHtml = renderChart(week.history, week.available_now);
+    html += `
+      <tr class="detail-row hidden" id="${rowId}">
+        <td colspan="7">
+          <div class="detail-inner">${chartHtml}</div>
         </td>
       </tr>`;
   });
-  
+
   html += `</tbody></table>`;
-  
   document.getElementById('table-section').innerHTML = html;
+}
+
+function toggleDetail(rowId) {
+  const row = document.getElementById(rowId);
+  const btn = document.getElementById('btn-' + rowId);
+  const isHidden = row.classList.contains('hidden');
+  row.classList.toggle('hidden', !isHidden);
+  btn.textContent = isHidden ? '▼' : '▶';
 }
 
 // Load on page load
