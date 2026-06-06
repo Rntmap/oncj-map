@@ -766,14 +766,13 @@ function searchProperties(query) {
   
   let html = '';
   results.forEach(r => {
-    html += `
-      <div class="search-result-item" onclick="addComp('${r.listId}')">
-        <div class="search-result-info">
-          <div class="search-result-address">${r.address}</div>
-          <div class="search-result-specs">${r.beds || '?'} BR • ${r.baths || '?'} BA • Similarity: ${Math.round(r.similarity)}</div>
-        </div>
-        <button class="add-btn-small" onclick="event.stopPropagation(); addComp('${r.listId}')">Add</button>
-      </div>`;
+    html += '<div class="search-result-item" onclick="addComp('' + r.listId + '')">' +
+      '<div class="search-result-info">' +
+      '<div class="search-result-address">' + r.address + '</div>' +
+      '<div class="search-result-specs">' + (r.beds || '?') + ' BR • ' + (r.baths || '?') + ' BA • Similarity: ' + Math.round(r.similarity) + '</div>' +
+      '</div>' +
+      '<button class="add-btn-small" onclick="event.stopPropagation(); addComp('' + r.listId + '')">Add</button>' +
+      '</div>';
   });
   
   document.getElementById('search-results').innerHTML = html;
@@ -952,34 +951,29 @@ function renderCompList() {
   
   // Handle edge case: no comps selected - show market context
   if (comps.length === 0) {
-    let html = `
-      <div class="market-context">
-        <h3><span>ℹ️</span> Market Context</h3>
-        <p>You've removed all comparable properties. Here's what similar properties in the market are renting for this week:</p>
-        <div class="market-list">`;
+    let html = '<div class="market-context">' +
+      '<h3><span>ℹ️</span> Market Context</h3>' +
+      '<p>You have removed all comparable properties. Here is what similar properties in the market are renting for this week:</p>' +
+      '<div class="market-list">';
     
-    // Show top 10 qualified comps with their prices
     const marketComps = allComps.slice(0, 10);
     marketComps.forEach(c => {
       const price = c.weeks && c.weeks[selectedWeek] ? '$' + Math.round(c.weeks[selectedWeek]).toLocaleString() : 'N/A';
-      html += `
-        <div class="market-item">
-          <div>
-            <div class="market-item-address">${c.address}</div>
-            <div style="font-size:0.85rem; color:var(--gray); margin-top:4px;">
-              ${c.beds || '?'} BR • ${c.baths || '?'} BA • Match: ${Math.round(c.similarity)}
-            </div>
-          </div>
-          <div class="market-item-price">${price}</div>
-        </div>`;
+      html += '<div class="market-item">' +
+        '<div>' +
+        '<div class="market-item-address">' + c.address + '</div>' +
+        '<div style="font-size:0.85rem;color:var(--gray);margin-top:4px;">' +
+        (c.beds || '?') + ' BR • ' + (c.baths || '?') + ' BA • Match: ' + Math.round(c.similarity) +
+        '</div>' +
+        '</div>' +
+        '<div class="market-item-price">' + price + '</div>' +
+        '</div>';
     });
     
-    html += `
-        </div>
-        <p style="margin-top:16px; font-size:0.9rem;">
-          <strong>Tip:</strong> Add properties from "Available to Add" below to create your custom comp set.
-        </p>
-      </div>`;
+    html += '</div>' +
+      '<p style="margin-top:16px;font-size:0.9rem;">' +
+      '<strong>Tip:</strong> Add properties from "Available to Add" below to create your custom comp set.' +
+      '</p></div>';
     
     document.getElementById('comp-list-container').innerHTML = html;
     return;
@@ -1083,32 +1077,27 @@ function renderPriceChart() {
   // Find max price for scaling
   const maxPrice = Math.max(...allPrices.map(p => p.price));
   
-  let html = `
-    <div class="price-chart-container">
-      <h3>Price Comparison for Week of ${selectedWeek}</h3>
-      <div class="price-chart">`;
+  let html = '<div class="price-chart-container">' +
+    '<h3>Price Comparison for Week of ' + selectedWeek + '</h3>' +
+    '<div class="price-chart">';
   
   allPrices.forEach(item => {
     const width = (item.price / maxPrice) * 100;
     const barClass = item.isSubject ? 'price-bar your-property' : 'price-bar';
     const label = item.isSubject ? item.address : item.address.substring(0, 30);
     
-    html += `
-      <div class="${barClass}">
-        <div class="price-label">${label}</div>
-        <div class="price-visual">
-          <div class="price-bar-fill" style="width:${width}%;">
-            ${item.isSubject ? '← YOU' : ''}
-          </div>
-        </div>
-        <div class="price-amount">$${Math.round(item.price).toLocaleString()}</div>
-      </div>`;
+    html += '<div class="' + barClass + '">' +
+      '<div class="price-label">' + label + '</div>' +
+      '<div class="price-visual">' +
+      '<div class="price-bar-fill" style="width:' + width.toFixed(1) + '%;">' +
+      (item.isSubject ? '← YOU' : '') +
+      '</div>' +
+      '</div>' +
+      '<div class="price-amount">$' + Math.round(item.price).toLocaleString() + '</div>' +
+      '</div>';
   });
   
-  html += `
-      </div>
-    </div>`;
-  
+  html += '</div></div>';
   document.getElementById('price-chart-section').innerHTML = html;
 }
 
@@ -1116,11 +1105,9 @@ function renderAvailableComps() {
   const availableComps = allComps.filter(c => !selectedCompIds.includes(c.listId));
   
   if (availableComps.length === 0) {
-    document.getElementById('available-section').innerHTML = `
-      <div class="empty-state">
-        <strong>All Available Properties Added</strong><br>
-        You've added all ${allComps.length} qualified properties to your comp set!
-      </div>`;
+    document.getElementById('available-section').innerHTML =
+      '<div class="empty-state"><strong>All Available Properties Added</strong><br>' +
+      'You have added all ' + allComps.length + ' qualified properties to your comp set!</div>';
     return;
   }
   
@@ -1145,22 +1132,20 @@ function renderAvailableComps() {
     });
   }
   
-  let html = `
-    <div class="available-header">
-      <h3>Available to Add <span style="font-weight:normal; color:var(--gray); font-size:0.9rem;">(${availableComps.length} properties)</span></h3>
-      <div class="sort-controls">
-        <span class="sort-label">Sort by:</span>
-        <select class="sort-select" id="sort-select" onchange="changeSortBy(this.value)">
-          <option value="match" ${sortBy === 'match' ? 'selected' : ''}>Best Match</option>
-          <option value="price" ${sortBy === 'price' ? 'selected' : ''}>Price (Low to High)</option>
-          <option value="distance" ${sortBy === 'distance' ? 'selected' : ''}>Distance</option>
-        </select>
-      </div>
-    </div>
-    <div class="available-list">`;
+  let html = '<div class="available-header">' +
+    '<h3>Available to Add <span style="font-weight:normal;color:var(--gray);font-size:0.9rem;">(' + availableComps.length + ' properties)</span></h3>' +
+    '<div class="sort-controls">' +
+    '<span class="sort-label">Sort by:</span>' +
+    '<select class="sort-select" id="sort-select" onchange="changeSortBy(this.value)">' +
+    '<option value="match"' + (sortBy === 'match' ? ' selected' : '') + '>Best Match</option>' +
+    '<option value="price"' + (sortBy === 'price' ? ' selected' : '') + '>Price (Low to High)</option>' +
+    '<option value="distance"' + (sortBy === 'distance' ? ' selected' : '') + '>Distance</option>' +
+    '</select>' +
+    '</div>' +
+    '</div>' +
+    '<div class="available-list">';
   
   sorted.forEach(c => {
-    // Get sample price (average of all weeks)
     let samplePrice = 'N/A';
     if (c.weeks && Object.keys(c.weeks).length > 0) {
       const prices = Object.values(c.weeks);
@@ -1168,24 +1153,22 @@ function renderAvailableComps() {
       samplePrice = '$' + Math.round(avg).toLocaleString();
     }
     
-    // Get distance from subject property
     const distance = haversineDistance(subjectProperty.lat, subjectProperty.lng, c.lat, c.lng);
     const distStr = distance < 1000 ? Math.round(distance) + 'm' : (distance / 1000).toFixed(1) + 'km';
     
-    html += `
-      <div class="available-item">
-        <div class="available-info">
-          <div class="available-address">${c.address}</div>
-          <div class="available-details">
-            <span class="match-badge">Match: ${Math.round(c.similarity)}</span>
-            <span>${c.beds || '?'} BR</span>
-            <span>${c.baths || '?'} BA</span>
-            <span>📍 ${distStr} away</span>
-            <span>💰 Avg: ${samplePrice}</span>
-          </div>
-        </div>
-        <button class="add-btn-small" onclick="addComp('${c.listId}')">+ Add</button>
-      </div>`;
+    html += '<div class="available-item">' +
+      '<div class="available-info">' +
+      '<div class="available-address">' + c.address + '</div>' +
+      '<div class="available-details">' +
+      '<span class="match-badge">Match: ' + Math.round(c.similarity) + '</span>' +
+      '<span>' + (c.beds || '?') + ' BR</span>' +
+      '<span>' + (c.baths || '?') + ' BA</span>' +
+      '<span>📍 ' + distStr + ' away</span>' +
+      '<span>💰 Avg: ' + samplePrice + '</span>' +
+      '</div>' +
+      '</div>' +
+      '<button class="add-btn-small" onclick="addComp('' + c.listId + '')">+ Add</button>' +
+      '</div>';
   });
   
   html += '</div>';
@@ -1228,7 +1211,8 @@ function renderWeekComparison() {
   
   compPrices.forEach((c, i) => {
     if (!added && subjectPrice <= c.price) {
-      html += `<tr style="background:#e0f2fe;"><td><strong>${subject.address} (Your Property)</strong></td><td class="price-cell">$${Math.round(subjectPrice).toLocaleString()}</td><td>—</td></tr>`;
+      html += '<tr style="background:#e0f2fe;"><td><strong>' + subject.address + ' (Your Property)</strong></td>' +
+        '<td class="price-cell">$' + Math.round(subjectPrice).toLocaleString() + '</td><td>—</td></tr>';
       added = true;
       subjectRank = i + 1;
     }
@@ -1238,11 +1222,14 @@ function renderWeekComparison() {
     const sign = diff > 0 ? '+' : '';
     const className = diff > 0 ? 'price-higher' : 'price-lower';
     
-    html += `<tr><td>${c.address}</td><td class="price-cell">$${Math.round(c.price).toLocaleString()}</td><td class="price-diff ${className}">${sign}$${Math.round(Math.abs(diff)).toLocaleString()} (${sign}${pct}%)</td></tr>`;
+    html += '<tr><td>' + c.address + '</td>' +
+      '<td class="price-cell">$' + Math.round(c.price).toLocaleString() + '</td>' +
+      '<td class="price-diff ' + className + '">' + sign + '$' + Math.round(Math.abs(diff)).toLocaleString() + ' (' + sign + pct + '%)</td></tr>';
   });
   
   if (!added) {
-    html += `<tr style="background:#e0f2fe;"><td><strong>${subject.address} (Your Property)</strong></td><td class="price-cell">$${Math.round(subjectPrice).toLocaleString()}</td><td>—</td></tr>`;
+    html += '<tr style="background:#e0f2fe;"><td><strong>' + subject.address + ' (Your Property)</strong></td>' +
+      '<td class="price-cell">$' + Math.round(subjectPrice).toLocaleString() + '</td><td>—</td></tr>';
     subjectRank = compPrices.length + 1;
   }
   

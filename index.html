@@ -380,42 +380,89 @@ function renderInfoBox(data) {
 
 function renderChart(history, currentAvail) {
   if (!history || history.length < 2) {
-    return '<p style="color:var(--gray);font-size:0.85rem;">Not enough history yet — needs 2+ snapshots.</p>';
+    return '<p style="color:var(--gray);font-size:0.85rem;padding:12px 0;">Not enough history yet — needs 2+ snapshots.</p>';
   }
 
-  const maxAvail = Math.max(...history.map(h => h.available), 1);
-  const firstAvail = history[0].available;
-  const chartH = 120;
+  const W = 600, H = 160, padL = 50, padR = 20, padT = 20, padB = 36;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
 
-  // Build columns
-  let cols = '';
-  history.forEach((h, i) => {
-    const availH = Math.round((h.available / maxAvail) * chartH);
-    const rentedCount = Math.max(0, firstAvail - h.available);
-    const rentedH = Math.round((rentedCount / maxAvail) * chartH);
-    const label = h.date.slice(5); // "MM-DD"
+  const maxVal = Math.max(...history.map(h => h.available));
+  const minVal = Math.min(...history.map(h => h.available));
+  // Give a little headroom above and below
+  const yMax = Math.ceil(maxVal * 1.08);
+  const yMin = Math.max(0, Math.floor(minVal * 0.92));
+  const yRange = yMax - yMin || 1;
 
-    cols += '<div class="chart-col">' +
-      '<div class="chart-value">' + h.available + '</div>' +
-      '<div style="display:flex;align-items:flex-end;gap:2px;height:' + chartH + 'px;">' +
-        '<div class="chart-bar available" style="height:' + availH + 'px;flex:1;" title="Available: ' + h.available + '"></div>' +
-        (rentedH > 0 ? '<div class="chart-bar rented" style="height:' + rentedH + 'px;flex:1;" title="Rented: ' + rentedCount + '"></div>' : '') +
-      '</div>' +
-      '<div class="chart-label">' + label + '</div>' +
-      '</div>';
+  const xStep = innerW / (history.length - 1);
+
+  // Map data to SVG coords
+  const pts = history.map((h, i) => ({
+    x: padL + i * xStep,
+    y: padT + innerH - ((h.available - yMin) / yRange) * innerH,
+    available: h.available,
+    date: h.date.slice(5)   // MM-DD
+  }));
+
+  // Polyline points string
+  const lineStr = pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+
+  // Filled area under the line
+  const areaStr = 'M' + pts[0].x.toFixed(1) + ',' + (padT + innerH) +
+    ' L' + lineStr.split(' ').map(p => p).join(' L') +
+    ' L' + pts[pts.length-1].x.toFixed(1) + ',' + (padT + innerH) + ' Z';
+
+  // Y-axis gridlines (3 lines)
+  let gridLines = '';
+  let yLabels = '';
+  [0, 0.5, 1].forEach(frac => {
+    const val = Math.round(yMin + yRange * frac);
+    const cy = padT + innerH - frac * innerH;
+    gridLines += '<line x1="' + padL + '" y1="' + cy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + cy.toFixed(1) + '" stroke="#e5e7eb" stroke-width="1"/>';
+    yLabels += '<text x="' + (padL - 6) + '" y="' + (cy + 4).toFixed(1) + '" text-anchor="end" font-size="11" fill="#7a8c99">' + val + '</text>';
   });
 
-  const totalBooked = firstAvail - currentAvail;
-  const pctBooked = firstAvail > 0 ? Math.round((totalBooked / firstAvail) * 100) : 0;
+  // X-axis labels + vertical tick marks
+  let xLabels = '';
+  pts.forEach(p => {
+    xLabels += '<text x="' + p.x.toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="11" fill="#7a8c99">' + p.date + '</text>';
+    xLabels += '<line x1="' + p.x.toFixed(1) + '" y1="' + (padT + innerH) + '" x2="' + p.x.toFixed(1) + '" y2="' + (padT + innerH + 4) + '" stroke="#cbd5e1" stroke-width="1"/>';
+  });
 
-  return '<div class="chart-wrap">' +
-    '<h4>Booking Progression (' + history.length + ' snapshots, one per pipeline week)</h4>' +
-    '<div class="chart-bar-group">' + cols + '</div>' +
-    '<div class="chart-legend">' +
-      '<div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--mid)"></div> Still available</div>' +
-      '<div class="chart-legend-item"><div class="chart-legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> Booked (vs. first snapshot)</div>' +
-    '</div>' +
-    '</div>' +
+  // Data point circles + value labels
+  let circles = '';
+  pts.forEach((p, i) => {
+    const isLast = i === pts.length - 1;
+    circles += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4" fill="' + (isLast ? '#e8604a' : '#1a6b96') + '" stroke="white" stroke-width="2">' +
+      '<title>' + p.date + ': ' + p.available + ' available</title>' +
+      '</circle>';
+    // Value label above point (offset to avoid overlaps)
+    const labelY = (p.y - 10 < padT + 4) ? p.y + 16 : p.y - 10;
+    circles += '<text x="' + p.x.toFixed(1) + '" y="' + labelY.toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="600" fill="' + (isLast ? '#e8604a' : '#1a6b96') + '">' + p.available + '</text>';
+  });
+
+  const totalBooked = history[0].available - currentAvail;
+  const pctBooked = history[0].available > 0 ? Math.round((totalBooked / history[0].available) * 100) : 0;
+
+  const svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="booking-chart" xmlns="http://www.w3.org/2000/svg">' +
+    // Grid
+    gridLines +
+    yLabels +
+    // Axes
+    '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT + innerH) + '" stroke="#cbd5e1" stroke-width="1"/>' +
+    '<line x1="' + padL + '" y1="' + (padT + innerH) + '" x2="' + (W - padR) + '" y2="' + (padT + innerH) + '" stroke="#cbd5e1" stroke-width="1"/>' +
+    // Area fill
+    '<path d="' + areaStr + '" fill="#1a6b96" fill-opacity="0.1"/>' +
+    // Line
+    '<polyline points="' + lineStr + '" fill="none" stroke="#1a6b96" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+    // X labels
+    xLabels +
+    // Points + value labels
+    circles +
+    '</svg>';
+
+  return '<h4 style="margin-bottom:12px;">Booking Progression <span style="font-weight:400;color:var(--gray);font-size:0.85rem;">(' + history.length + ' snapshots · one per pipeline week)</span></h4>' +
+    '<div class="chart-wrap">' + svg + '</div>' +
     '<div class="detail-stats">' +
       '<div class="detail-stat"><div class="detail-stat-label">First Tracked</div><div class="detail-stat-value">' + history[0].available + '</div></div>' +
       '<div class="detail-stat"><div class="detail-stat-label">Available Now</div><div class="detail-stat-value">' + currentAvail + '</div></div>' +
