@@ -1,18 +1,18 @@
 {
-  "generated": "2026-06-26",
+  "generated": "2026-07-10",
   "snapshots_analyzed": 8,
-  "first_snapshot": "2026-05-11",
-  "latest_snapshot": "2026-06-26",
+  "first_snapshot": "2026-05-15",
+  "latest_snapshot": "2026-07-10",
   "weeks": [
     {
       "week_start": "2026-05-23",
       "week_label": "May 23 (Memorial Day)",
-      "available_now": 591,
-      "avg_price_available": 2713.16,
-      "avg_price_rented": 2816.86,
-      "velocity_per_week": 5.3,
-      "total_rented": 35,
-      "rented_since_last": 0,
+      "available_now": 590,
+      "avg_price_available": 2705.04,
+      "avg_price_rented": 2946.94,
+      "velocity_per_week": 4.5,
+      "total_rented": 36,
+      "rented_since_last": 1,
       "history": [
         {
           "date": "2026-05-15",
@@ -37,6 +37,10 @@
         {
           "date": "2026-06-26",
           "available": 591
+        },
+        {
+          "date": "2026-07-10",
+          "available": 590
         }
       ]
     },
@@ -46,9 +50,9 @@
       "available_now": 875,
       "avg_price_available": 2938.35,
       "avg_price_rented": 2550.38,
-      "velocity_per_week": 7.9,
+      "velocity_per_week": 6.5,
       "total_rented": 52,
-      "rented_since_last": 1,
+      "rented_since_last": 0,
       "history": [
         {
           "date": "2026-05-15",
@@ -73,18 +77,22 @@
         {
           "date": "2026-06-26",
           "available": 875
+        },
+        {
+          "date": "2026-07-10",
+          "available": 875
         }
       ]
     },
     {
       "week_start": "2026-06-06",
       "week_label": "Jun 06",
-      "available_now": 779,
-      "avg_price_available": 3249.82,
-      "avg_price_rented": 2823.82,
-      "velocity_per_week": 12.8,
-      "total_rented": 84,
-      "rented_since_last": 2,
+      "available_now": 778,
+      "avg_price_available": 3245.64,
+      "avg_price_rented": 2908.25,
+      "velocity_per_week": 10.6,
+      "total_rented": 85,
+      "rented_since_last": 1,
       "history": [
         {
           "date": "2026-05-15",
@@ -109,6 +117,10 @@
         {
           "date": "2026-06-26",
           "available": 779
+        },
+        {
+          "date": "2026-07-10",
+          "available": 778
         }
       ]
     },
@@ -117,10 +129,10 @@
       "week_label": "Jun 13",
       "available_now": 542,
       "avg_price_available": 3715.39,
-      "avg_price_rented": 3541.19,
-      "velocity_per_week": 16.0,
-      "total_rented": 105,
-      "rented_since_last": 2,
+      "avg_price_rented": 3521.93,
+      "velocity_per_week": 13.2,
+      "total_rented": 106,
+      "rented_since_last": 0,
       "history": [
         {
           "date": "2026-05-15",
@@ -145,18 +157,22 @@
         {
           "date": "2026-06-26",
           "available": 542
+        },
+        {
+          "date": "2026-07-10",
+          "available": 542
         }
       ]
     },
     {
       "week_start": "2026-06-20",
       "week_label": "Jun 20",
-      "available_now": 316,
-      "avg_price_available": 3886.22,
-      "avg_price_rented": 4329.97,
-      "velocity_per_week": 14.8,
-      "total_rented": 97,
-      "rented_since_last": 7,
+      "available_now": 317,
+      "avg_price_available": 3884.69,
+      "avg_price_rented": 4301.09,
+      "velocity_per_week": 12.2,
+      "total_rented": 98,
+      "rented_since_last": 0,
       "history": [
         {
           "date": "2026-05-15",
@@ -181,18 +197,22 @@
         {
           "date": "2026-06-26",
           "available": 316
+        },
+        {
+          "date": "2026-07-10",
+          "available": 317
         }
       ]
     },
     {
       "week_start": "2026-06-27",
       "week_label": "Jun 27",
-      "available_now": 428,
-      "avg_price_available": 4535.13,
-      "avg_price_rented": 4172.05,
-      "velocity_per_week": 26.3,
-      "total_rented": 173,
-      "rented_since_last": 42,
+      "available_now": 400,
+      "avg_price_available": 4573.66,
+      "avg_price_rented": 4212.69,
+      "velocity_per_week": 24.4,
+      "total_rented": 195,
+      "rented_since_last": 29,
       "history": [
         {
           "date": "2026-05-15",
@@ -217,18 +237,22 @@
         {
           "date": "2026-06-26",
           "available": 428
+        },
+        {
+          "date": "2026-07-10",
+          "available": 400
         }
       ]
     },
     {
       "week_start": "2026-07-04",
       "week_label": "Jul 04 (July 4th)",
-      "available_now": 188,
-      "avg_price_available": 4330.37,
-      "avg_price_rented": 4862.68,
-      "velocity_per_week": 20.7,
-      "total_rented": 136,
-      "rented_since_last": 36,
+      "available_now": 161,
+      "avg_price_available": 4249.01,
+      "avg_price_rented": 4890.69,
+      "velocity_per_week": 19.9,
+      "total_rented": 159,
+      "rented_since_last": 32,
       "history": [
         {
           "date": "2026-05-15",
@@ -253,18 +277,22 @@
         {
           "date": "2026-06-26",
           "available": 188
+        },
+        {
+          "date": "2026-07-10",
+          "available": 161
         }
       ]
     },
     {
       "week_start": "2026-07-11",
       "week_label": "Jul 11",
-      "available_now": 157,
-      "avg_price_available": 4011.46,
-      "avg_price_rented": 3507.18,
-      "velocity_per_week": 12.5,
-      "total_rented": 82,
-      "rented_since_last": 11,
+      "available_now": 133,
+      "avg_price_available": 3921.58,
+      "avg_price_rented": 3682.9,
+      "velocity_per_week": 12.9,
+      "total_rented": 103,
+      "rented_since_last": 30,
       "history": [
         {
           "date": "2026-05-15",
@@ -289,18 +317,22 @@
         {
           "date": "2026-06-26",
           "available": 157
+        },
+        {
+          "date": "2026-07-10",
+          "available": 133
         }
       ]
     },
     {
       "week_start": "2026-07-18",
       "week_label": "Jul 18",
-      "available_now": 129,
-      "avg_price_available": 4339.67,
-      "avg_price_rented": 3929.4,
-      "velocity_per_week": 16.9,
-      "total_rented": 111,
-      "rented_since_last": 21,
+      "available_now": 113,
+      "avg_price_available": 4545.49,
+      "avg_price_rented": 4060.01,
+      "velocity_per_week": 15.8,
+      "total_rented": 126,
+      "rented_since_last": 26,
       "history": [
         {
           "date": "2026-05-15",
@@ -325,18 +357,22 @@
         {
           "date": "2026-06-26",
           "available": 129
+        },
+        {
+          "date": "2026-07-10",
+          "available": 113
         }
       ]
     },
     {
       "week_start": "2026-07-25",
       "week_label": "Jul 25",
-      "available_now": 115,
-      "avg_price_available": 4098.17,
-      "avg_price_rented": 3923.55,
-      "velocity_per_week": 11.3,
-      "total_rented": 74,
-      "rented_since_last": 9,
+      "available_now": 102,
+      "avg_price_available": 4407.01,
+      "avg_price_rented": 4066.9,
+      "velocity_per_week": 11.4,
+      "total_rented": 91,
+      "rented_since_last": 24,
       "history": [
         {
           "date": "2026-05-15",
@@ -361,18 +397,22 @@
         {
           "date": "2026-06-26",
           "available": 115
+        },
+        {
+          "date": "2026-07-10",
+          "available": 102
         }
       ]
     },
     {
       "week_start": "2026-08-01",
       "week_label": "Aug 01",
-      "available_now": 106,
-      "avg_price_available": 3098.85,
-      "avg_price_rented": 3569.47,
-      "velocity_per_week": 11.4,
-      "total_rented": 75,
-      "rented_since_last": 10,
+      "available_now": 76,
+      "avg_price_available": 2920.5,
+      "avg_price_rented": 3484.07,
+      "velocity_per_week": 12.1,
+      "total_rented": 97,
+      "rented_since_last": 35,
       "history": [
         {
           "date": "2026-05-15",
@@ -397,18 +437,22 @@
         {
           "date": "2026-06-26",
           "available": 106
+        },
+        {
+          "date": "2026-07-10",
+          "available": 76
         }
       ]
     },
     {
       "week_start": "2026-08-08",
       "week_label": "Aug 08",
-      "available_now": 222,
-      "avg_price_available": 4171.43,
-      "avg_price_rented": 4197.81,
-      "velocity_per_week": 16.7,
-      "total_rented": 110,
-      "rented_since_last": 19,
+      "available_now": 201,
+      "avg_price_available": 4369.62,
+      "avg_price_rented": 4101.24,
+      "velocity_per_week": 17.0,
+      "total_rented": 136,
+      "rented_since_last": 31,
       "history": [
         {
           "date": "2026-05-15",
@@ -433,18 +477,22 @@
         {
           "date": "2026-06-26",
           "available": 222
+        },
+        {
+          "date": "2026-07-10",
+          "available": 201
         }
       ]
     },
     {
       "week_start": "2026-08-15",
       "week_label": "Aug 15",
-      "available_now": 427,
-      "avg_price_available": 4473.71,
-      "avg_price_rented": 3995.98,
-      "velocity_per_week": 19.5,
-      "total_rented": 128,
-      "rented_since_last": 23,
+      "available_now": 397,
+      "avg_price_available": 4595.03,
+      "avg_price_rented": 4019.01,
+      "velocity_per_week": 20.2,
+      "total_rented": 162,
+      "rented_since_last": 39,
       "history": [
         {
           "date": "2026-05-15",
@@ -469,18 +517,22 @@
         {
           "date": "2026-06-26",
           "available": 427
+        },
+        {
+          "date": "2026-07-10",
+          "available": 397
         }
       ]
     },
     {
       "week_start": "2026-08-22",
       "week_label": "Aug 22",
-      "available_now": 603,
-      "avg_price_available": 4050.17,
-      "avg_price_rented": 3962.26,
-      "velocity_per_week": 20.2,
-      "total_rented": 133,
-      "rented_since_last": 23,
+      "available_now": 587,
+      "avg_price_available": 4062.52,
+      "avg_price_rented": 4077.5,
+      "velocity_per_week": 19.0,
+      "total_rented": 152,
+      "rented_since_last": 28,
       "history": [
         {
           "date": "2026-05-15",
@@ -505,18 +557,22 @@
         {
           "date": "2026-06-26",
           "available": 603
+        },
+        {
+          "date": "2026-07-10",
+          "available": 587
         }
       ]
     },
     {
       "week_start": "2026-08-29",
       "week_label": "Aug 29",
-      "available_now": 806,
-      "avg_price_available": 3662.28,
-      "avg_price_rented": 3620.59,
-      "velocity_per_week": 14.2,
-      "total_rented": 93,
-      "rented_since_last": 14,
+      "available_now": 788,
+      "avg_price_available": 3696.78,
+      "avg_price_rented": 3529.4,
+      "velocity_per_week": 14.6,
+      "total_rented": 117,
+      "rented_since_last": 30,
       "history": [
         {
           "date": "2026-05-15",
@@ -541,18 +597,22 @@
         {
           "date": "2026-06-26",
           "available": 806
+        },
+        {
+          "date": "2026-07-10",
+          "available": 788
         }
       ]
     },
     {
       "week_start": "2026-09-05",
       "week_label": "Sep 05 (Labor Day)",
-      "available_now": 633,
-      "avg_price_available": 2983.68,
-      "avg_price_rented": 3035.39,
-      "velocity_per_week": 13.5,
-      "total_rented": 89,
-      "rented_since_last": 14,
+      "available_now": 614,
+      "avg_price_available": 3044.17,
+      "avg_price_rented": 2919.15,
+      "velocity_per_week": 14.0,
+      "total_rented": 112,
+      "rented_since_last": 29,
       "history": [
         {
           "date": "2026-05-15",
@@ -577,18 +637,22 @@
         {
           "date": "2026-06-26",
           "available": 633
+        },
+        {
+          "date": "2026-07-10",
+          "available": 614
         }
       ]
     },
     {
       "week_start": "2026-09-12",
       "week_label": "Sep 12",
-      "available_now": 666,
-      "avg_price_available": 2684.94,
-      "avg_price_rented": 2799.51,
-      "velocity_per_week": 11.1,
-      "total_rented": 73,
-      "rented_since_last": 9,
+      "available_now": 647,
+      "avg_price_available": 2721.52,
+      "avg_price_rented": 2761.8,
+      "velocity_per_week": 11.8,
+      "total_rented": 94,
+      "rented_since_last": 26,
       "history": [
         {
           "date": "2026-05-15",
@@ -613,18 +677,22 @@
         {
           "date": "2026-06-26",
           "available": 666
+        },
+        {
+          "date": "2026-07-10",
+          "available": 647
         }
       ]
     },
     {
       "week_start": "2026-09-19",
       "week_label": "Sep 19",
-      "available_now": 851,
-      "avg_price_available": 2473.32,
-      "avg_price_rented": 2267.67,
-      "velocity_per_week": 9.1,
-      "total_rented": 60,
-      "rented_since_last": 7,
+      "available_now": 839,
+      "avg_price_available": 2490.82,
+      "avg_price_rented": 2384.74,
+      "velocity_per_week": 9.8,
+      "total_rented": 78,
+      "rented_since_last": 21,
       "history": [
         {
           "date": "2026-05-15",
@@ -649,18 +717,22 @@
         {
           "date": "2026-06-26",
           "available": 851
+        },
+        {
+          "date": "2026-07-10",
+          "available": 839
         }
       ]
     },
     {
       "week_start": "2026-09-26",
       "week_label": "Sep 26",
-      "available_now": 927,
-      "avg_price_available": 2304.99,
-      "avg_price_rented": 2040.0,
-      "velocity_per_week": 8.1,
-      "total_rented": 53,
-      "rented_since_last": 6,
+      "available_now": 920,
+      "avg_price_available": 2322.47,
+      "avg_price_rented": 2099.45,
+      "velocity_per_week": 8.0,
+      "total_rented": 64,
+      "rented_since_last": 13,
       "history": [
         {
           "date": "2026-05-15",
@@ -685,6 +757,10 @@
         {
           "date": "2026-06-26",
           "available": 927
+        },
+        {
+          "date": "2026-07-10",
+          "available": 920
         }
       ]
     }
