@@ -52310,7 +52310,6 @@ function renderMarkers(data) {
           <div class="popup-specs">${p.beds||'?'} BR · ${p.baths||'?'} BA · ${p.guests||'?'} guests</div>
           <div class="popup-price">${price?'$'+price.toLocaleString()+' / week':'Unavailable'}</div>
           <div style="display:flex;gap:8px;margin-top:12px;">
-            <a href="ocnj-comp-analysis.html?id=${p.listId}&week=${filters.week}" target="_blank" class="popup-link popup-link-secondary">📊 Comp Analysis</a>
             <a href="ocnj-rate-tool.html?id=${p.listId}" target="_blank" class="popup-link popup-link-secondary">💲 Rates</a>
             <a href="${p.listingUrl}" target="_blank" class="popup-link">View on Berger →</a>
           </div>
