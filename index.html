@@ -381,7 +381,7 @@ function setVelocityBands(weeks) {
 // ── FILTERS ──────────────────────────────────────────────────────────────────
 const FZONES = [['gardens','🌷 Gardens'],['north','🏖️ North End'],['downtown','🎡 Downtown'],
                 ['goldcoast','🌴 Gold Coast'],['transition','🚶 Transition'],['south','🦀 South End']];
-const FSTATE = { zones: {}, beds: 0, guests: 0 };
+const FSTATE = { zones: {}, beds: {}, guests: 0 };
 
 function renderFilterBar() {
   const opt = (v, t, cur) => '<option value="' + v + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + t + '</option>';
@@ -390,10 +390,10 @@ function renderFilterBar() {
       '<div class="fb-row"><span class="fb-label">Location</span>' +
         FZONES.map(z => '<span class="fb-chip' + (FSTATE.zones[z[0]] ? ' active' : '') + '" onclick="toggleZone(\'' + z[0] + '\')">' + z[1] + '</span>').join('') +
       '</div>' +
-      '<div class="fb-row"><span class="fb-label">Home size</span>' +
-        '<select class="fb-select" onchange="setFilter(\'beds\', +this.value)">' +
-          opt(0,'Any bedrooms',FSTATE.beds) + [1,2,3,4,5].map(n => opt(n, n + ' bedroom' + (n > 1 ? 's' : ''), FSTATE.beds)).join('') + opt(6,'6+ bedrooms',FSTATE.beds) +
-        '</select>' +
+      '<div class="fb-row"><span class="fb-label">Bedrooms</span>' +
+        [1,2,3,4,5,6].map(n => '<span class="fb-chip' + (FSTATE.beds[n] ? ' active' : '') + '" onclick="toggleBeds(' + n + ')">' + (n === 6 ? '6+' : n) + '</span>').join('') +
+      '</div>' +
+      '<div class="fb-row"><span class="fb-label">Guests</span>' +
         '<select class="fb-select" onchange="setFilter(\'guests\', +this.value)">' +
           opt(0,'Any guests',FSTATE.guests) + [4,6,8,10,12].map(n => opt(n, 'Sleeps ' + n + '+', FSTATE.guests)).join('') +
         '</select>' +
@@ -404,21 +404,23 @@ function renderFilterBar() {
   updateFilterCount();
 }
 
-function filterActive() { return FSTATE.beds > 0 || FSTATE.guests > 0 || Object.values(FSTATE.zones).some(Boolean); }
+function filterActive() { return Object.values(FSTATE.beds).some(Boolean) || FSTATE.guests > 0 || Object.values(FSTATE.zones).some(Boolean); }
 
 function filteredHomes() {
   const zs = Object.keys(FSTATE.zones).filter(z => FSTATE.zones[z]);
+  const bs = Object.keys(FSTATE.beds).filter(n => FSTATE.beds[n]).map(Number);
   return DETAIL.homes.filter(h => {
     if (zs.length && !zs.includes(h.z)) return false;
-    if (FSTATE.beds > 0 && (FSTATE.beds >= 6 ? h.b < 6 : h.b !== FSTATE.beds)) return false;
+    if (bs.length && !bs.some(n => n >= 6 ? h.b >= 6 : h.b === n)) return false;
     if (FSTATE.guests > 0 && h.g < FSTATE.guests) return false;
     return true;
   });
 }
 
 function toggleZone(id) { FSTATE.zones[id] = !FSTATE.zones[id]; applyTrendFilter(); }
+function toggleBeds(n) { FSTATE.beds[n] = !FSTATE.beds[n]; applyTrendFilter(); }
 function setFilter(k, v) { FSTATE[k] = v; applyTrendFilter(); }
-function resetFilters() { FSTATE.zones = {}; FSTATE.beds = 0; FSTATE.guests = 0; applyTrendFilter(); }
+function resetFilters() { FSTATE.zones = {}; FSTATE.beds = {}; FSTATE.guests = 0; applyTrendFilter(); }
 
 function updateFilterCount() {
   const el = document.getElementById('fb-count'); if (!el) return;
