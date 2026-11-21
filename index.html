@@ -280,6 +280,17 @@ tr.detail-row.hidden { display:none; }
   
   .legend { gap:12px; }
 }
+
+/* ── Filter bar ── */
+.filter-bar{background:white;border-radius:12px;box-shadow:0 2px 12px rgba(10,61,92,0.08);padding:14px 16px;margin-bottom:20px}
+.fb-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0}
+.fb-label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);min-width:70px}
+.fb-chip{padding:7px 14px;border-radius:20px;border:2px solid #e8d5a8;background:white;font-size:.85rem;font-weight:600;color:var(--ocean);cursor:pointer;user-select:none}
+.fb-chip.active{background:var(--ocean);border-color:var(--ocean);color:white}
+.fb-select{padding:7px 10px;border:2px solid #e8d5a8;border-radius:10px;font-size:.85rem;font-weight:600;color:var(--ocean);background:white}
+.fb-reset{margin-left:auto;padding:7px 14px;border:none;border-radius:10px;background:var(--sand);color:var(--ocean);font-weight:700;font-size:.82rem;cursor:pointer}
+.fb-count{font-size:.82rem;color:var(--gray);font-weight:600}
+@media(max-width:600px){.fb-label{min-width:100%}.fb-reset{margin-left:0}}
 </style>
 </head>
 <body>
@@ -294,6 +305,7 @@ tr.detail-row.hidden { display:none; }
 </div>
 
 <div class="container">
+  <div id="filter-section"></div>
   <div id="info-section"></div>
   <div id="table-section" class="table-container">
     <div class="loading">Loading market trends...</div>
@@ -318,10 +330,14 @@ async function loadTrends() {
       if (ex.ok) window.WEEK_STATS = (await ex.json()).weekStats || null;
     } catch (e) { window.WEEK_STATS = null; }
 
-    // Velocity bands relative to this season's own range (top third = hot)
-    const v = (data.weeks || []).map(w => w.velocity_per_week).filter(x => x > 0).sort((a, b) => a - b);
-    const q = f => v.length ? v[Math.min(v.length - 1, Math.floor(f * v.length))] : 0;
-    window.VEL = { med: q(1 / 3), hot: q(2 / 3) };
+    // Optional: per-home snapshot data so the table can be filtered (zone / bedrooms / guests)
+    window.BASE = data; window.ORIG_STATS = window.WEEK_STATS;
+    try {
+      const td = await fetch('trends-detail.json');
+      window.DETAIL = td.ok ? await td.json() : null;
+    } catch (e) { window.DETAIL = null; }
+
+    setVelocityBands(data.weeks || []);
     
     // Update footer date
     document.getElementById('update-date').textContent = data.latest_snapshot || data.generated;
@@ -342,6 +358,7 @@ async function loadTrends() {
     
     // Render table
     renderTable(data.weeks);
+    if (window.DETAIL) renderFilterBar();
     
   } catch (error) {
     console.error('Error loading trends:', error);
@@ -354,6 +371,110 @@ async function loadTrends() {
   }
 }
 
+// Velocity bands relative to the weeks being shown (top third = hot)
+function setVelocityBands(weeks) {
+  const v = weeks.map(w => w.velocity_per_week).filter(x => x > 0).sort((a, b) => a - b);
+  const q = f => v.length ? v[Math.min(v.length - 1, Math.floor(f * v.length))] : 0;
+  window.VEL = { med: q(1 / 3), hot: q(2 / 3) };
+}
+
+// ── FILTERS ──────────────────────────────────────────────────────────────────
+const FZONES = [['gardens','🌷 Gardens'],['north','🏖️ North End'],['downtown','🎡 Downtown'],
+                ['goldcoast','🌴 Gold Coast'],['transition','🚶 Transition'],['south','🦀 South End']];
+const FSTATE = { zones: {}, beds: 0, guests: 0 };
+
+function renderFilterBar() {
+  const opt = (v, t, cur) => '<option value="' + v + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + t + '</option>';
+  document.getElementById('filter-section').innerHTML =
+    '<div class="filter-bar">' +
+      '<div class="fb-row"><span class="fb-label">Location</span>' +
+        FZONES.map(z => '<span class="fb-chip' + (FSTATE.zones[z[0]] ? ' active' : '') + '" onclick="toggleZone(\'' + z[0] + '\')">' + z[1] + '</span>').join('') +
+      '</div>' +
+      '<div class="fb-row"><span class="fb-label">Home size</span>' +
+        '<select class="fb-select" onchange="setFilter(\'beds\', +this.value)">' +
+          opt(0,'Any bedrooms',FSTATE.beds) + [1,2,3,4,5].map(n => opt(n, n + ' bedroom' + (n > 1 ? 's' : ''), FSTATE.beds)).join('') + opt(6,'6+ bedrooms',FSTATE.beds) +
+        '</select>' +
+        '<select class="fb-select" onchange="setFilter(\'guests\', +this.value)">' +
+          opt(0,'Any guests',FSTATE.guests) + [4,6,8,10,12].map(n => opt(n, 'Sleeps ' + n + '+', FSTATE.guests)).join('') +
+        '</select>' +
+        '<button class="fb-reset" onclick="resetFilters()">Reset</button>' +
+      '</div>' +
+      '<div class="fb-row"><span class="fb-count" id="fb-count"></span></div>' +
+    '</div>';
+  updateFilterCount();
+}
+
+function filterActive() { return FSTATE.beds > 0 || FSTATE.guests > 0 || Object.values(FSTATE.zones).some(Boolean); }
+
+function filteredHomes() {
+  const zs = Object.keys(FSTATE.zones).filter(z => FSTATE.zones[z]);
+  return DETAIL.homes.filter(h => {
+    if (zs.length && !zs.includes(h.z)) return false;
+    if (FSTATE.beds > 0 && (FSTATE.beds >= 6 ? h.b < 6 : h.b !== FSTATE.beds)) return false;
+    if (FSTATE.guests > 0 && h.g < FSTATE.guests) return false;
+    return true;
+  });
+}
+
+function toggleZone(id) { FSTATE.zones[id] = !FSTATE.zones[id]; applyTrendFilter(); }
+function setFilter(k, v) { FSTATE[k] = v; applyTrendFilter(); }
+function resetFilters() { FSTATE.zones = {}; FSTATE.beds = 0; FSTATE.guests = 0; applyTrendFilter(); }
+
+function updateFilterCount() {
+  const el = document.getElementById('fb-count'); if (!el) return;
+  const withData = DETAIL.homes.filter(h => Object.keys(h.p).length).length;
+  el.textContent = filterActive()
+    ? 'Showing ' + filteredHomes().filter(h => Object.keys(h.p).length).length.toLocaleString() + ' of ' + withData.toLocaleString() + ' homes'
+    : 'Showing all ' + withData.toLocaleString() + ' homes';
+}
+
+// Same weekly numbers the pipeline's step0 produces, but for any set of homes
+function computeWeeks(homes) {
+  const S = DETAIL.snapshots, L = S.length - 1, P = Math.max(L - 1, 0);
+  const elapsed = Math.max((new Date(S[L]) - new Date(S[0])) / 86400000 / 7, 1);
+  return BASE.weeks.map(w => {
+    const wk = w.week_start;
+    let n = 0, sum = 0, rented = 0, rsum = 0, since = 0;
+    const hist = DETAIL.histIdx.map(() => 0);
+    for (const h of homes) {
+      const a = h.p[wk]; if (!a) continue;
+      if (a[L] > 0) { n++; sum += a[L]; }
+      if (a[0] > 0 && !(a[L] > 0)) { rented++; rsum += a[0]; }
+      if (L > 0 && a[P] > 0 && !(a[L] > 0)) since++;
+      DETAIL.histIdx.forEach((si, k) => { if (a[si] > 0) hist[k]++; });
+    }
+    return {
+      week_start: wk, week_label: w.week_label,
+      available_now: n,
+      avg_price_available: n ? Math.round(sum / n * 100) / 100 : null,
+      avg_price_rented: rented ? Math.round(rsum / rented * 100) / 100 : null,
+      velocity_per_week: Math.round(rented / elapsed * 10) / 10,
+      total_rented: rented, rented_since_last: since,
+      history: DETAIL.histIdx.map((si, k) => ({ date: S[si], available: hist[k] }))
+    };
+  });
+}
+
+function computeStats(homes) {
+  const out = {};
+  DETAIL.statusWeeks.forEach((wk, j) => {
+    let b = 0, o = 0;
+    for (const h of homes) { const c = h.st && h.st[j]; if (c === 'B') b++; else if (c === 'O') o++; }
+    out[wk] = { booked: b, open: o };
+  });
+  return out;
+}
+
+function applyTrendFilter() {
+  renderFilterBar();
+  let weeks;
+  if (!filterActive()) { weeks = BASE.weeks; window.WEEK_STATS = ORIG_STATS; }
+  else { const hs = filteredHomes(); weeks = computeWeeks(hs); window.WEEK_STATS = computeStats(hs); }
+  setVelocityBands(weeks);
+  renderInfoBox(BASE);
+  renderTable(weeks);
+}
+
 function renderInfoBox(data) {
   const snapshots = data.snapshots_analyzed || 0;
   const dateRange = data.first_snapshot && data.latest_snapshot 
@@ -362,7 +483,9 @@ function renderInfoBox(data) {
   
   const html = `
     <div class="info-box">
-      <h2>How to Read This Data</h2>
+      <details>
+      <summary style="cursor:pointer;font-weight:700;font-size:1.1rem;color:var(--ocean)">How to read this data</summary>
+      <div style="margin-top:10px"></div>
       <p><strong>Available Now:</strong> Number of properties still available for that week</p>
       <p><strong>Booked This Week:</strong> Properties that rented since the last update</p>
       <p><strong>Avg Price (Available):</strong> Average weekly rate of properties still on the market</p>
@@ -385,6 +508,7 @@ function renderInfoBox(data) {
           <span>Hot (≥ ${VEL.hot.toFixed(1)}/week)</span>
         </div>
       </div>
+      </details>
     </div>`;
   
   document.getElementById('info-section').innerHTML = html;
