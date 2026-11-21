@@ -53,7 +53,7 @@
   }
   // Same filters as the map, but taking the price we pass in (used for booked homes).
   function matches(p, price) {
-    const f = filters, zones = ['north', 'mid', 'south'].filter(z => f[z]);
+    const f = filters, zones = (typeof ZONE_IDS !== 'undefined' ? ZONE_IDS : []).filter(z => f.zones && f.zones[z]);
     if (price < f.priceMin || price > f.priceMax) return false;
     if (f.bedsMin > 0 && p.beds && p.beds < f.bedsMin) return false;
     if (f.bedsMax > 0 && p.beds && p.beds > f.bedsMax) return false;
